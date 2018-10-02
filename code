@@ -1,0 +1,125 @@
+import java.lang.*;
+import javax.swing.*;
+import java.applet.Applet;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+
+/*<applet code="CGPA.class" width="470" height="380"> </applet>*/
+
+public class CGPA extends Applet implements ActionListener {
+
+    class studentData{
+        float avg;
+        String name;
+        String roll;
+        float marks[] = new float[5];
+    }
+
+    String str;
+    TextField t[] = new TextField[5];
+    TextField sName, sRoll;
+    ArrayList<studentData> sdata = new ArrayList<>();
+    Button rank, add;
+    Panel p1, p2;
+    JTextArea textArea = new JTextArea();
+
+    public void init()
+    {
+
+        setBackground(Color.cyan);
+        setForeground(Color.RED);
+        setSize(470,380);
+        str=" ";
+        rank=new Button("Get 1st Rank");
+        add=new Button("Add Details");
+
+        p1=new Panel();
+        p1.setLayout(new GridLayout(2,2));
+
+        p1.add(new Label("Student Number "));
+        sRoll = new TextField(5);
+        p1.add(sRoll);
+
+        p1.add(new Label("Student Name "));
+        sName = new TextField(15);
+        p1.add(sName);
+
+
+        add(p1);
+
+        for(int i=0; i<5; i++){
+            t[i] = new TextField(3);
+        }
+
+        p2=new Panel();
+        p2.setLayout(new GridLayout(6,2));
+        p2.add(new Label("Marks in JAVA"));
+        p2.add(t[0]);
+
+        p2.add(new Label("Marks in Operating System"));
+        p2.add(t[1]);
+
+        p2.add(new Label("Marks In Computer Networks"));
+        p2.add(t[2]);
+
+        p2.add(new Label("Marks in C"));
+        p2.add(t[3]);
+
+        p2.add(new Label("Marks in Python"));
+        p2.add(t[4]);
+
+        p2.add(rank);   p2.add(add);
+
+        rank.addActionListener(this);
+        add.addActionListener(this);
+
+        add(p2);
+
+        textArea.setBounds(250,500,100,100);
+        textArea.append("Roll\tName\tCGPA\n");
+        textArea.setEnabled(false);
+        textArea.setDisabledTextColor(Color.black);
+        add(textArea);
+
+    }
+
+    public void actionPerformed(ActionEvent e)
+    {
+        str=e.getActionCommand();
+        if(str.equals("Get 1st Rank")){
+            float max = 0;
+            int pos=0;
+            for(studentData s: sdata){
+                if(s.avg > max){
+                    max = s.avg;
+                    pos = sdata.indexOf(s);
+                }
+            }
+            studentData s = sdata.get(pos);
+            String a = s.roll+"   "+s.name+"  "+s.avg;
+            JOptionPane.showMessageDialog(null, a, "1st Rank", JOptionPane.PLAIN_MESSAGE);
+        }
+        else if(str.equals("Add Details")){
+            studentData sd = new studentData();
+            sd.name = sName.getText();
+            sd.roll = sRoll.getText();
+            for(int i=0; i<5; i++){
+                sd.marks[i] = Float.parseFloat(t[i].getText());
+                sd.avg += sd.marks[i];
+            }
+            float a = sd.avg/5;
+            a /= 9.5;
+            sd.avg = Math.round(a*100f)/100f;
+            sdata.add(sd);
+            textArea.append(sd.roll + "\t" + sd.name + "\t" + sd.avg + "\n");
+            sName.setText("");
+            sRoll.setText("");
+            for (int i=0; i<5; i++)
+                t[i].setText("");
+        }
+    }
+
+}
+
